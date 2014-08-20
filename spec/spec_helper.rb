@@ -9,8 +9,8 @@ require "shoulda-matchers"
 require "pry"
 
 database_configuration = YAML::load(File.open('./db/config.yml'))
-development_configuration = database_configuration["development"]
-ActiveRecord::Base.establish_connection(development_configuration)
+test_configuration = database_configuration["test"]
+ActiveRecord::Base.establish_connection(test_configuration)
 
 RSpec.configure do |config|
   config.before(:each) do
