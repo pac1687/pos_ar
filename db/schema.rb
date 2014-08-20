@@ -11,41 +11,50 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140820182308) do
+ActiveRecord::Schema.define(version: 20140820204220) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "cashiers", force: true do |t|
-    t.string "name"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "customers", force: true do |t|
-    t.string "name"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "products", force: true do |t|
-    t.string  "name"
-    t.integer "price"
+    t.string   "name"
+    t.integer  "price"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "purchases", force: true do |t|
-    t.integer "product_id"
-    t.integer "quantity"
-    t.integer "sale_id"
+    t.integer  "product_id"
+    t.integer  "quantity"
+    t.integer  "sale_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "returns", force: true do |t|
     t.integer  "purchase_id"
-    t.datetime "timestamp"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "sales", force: true do |t|
     t.integer  "customer_id"
     t.integer  "cashier_id"
-    t.datetime "timestamp"
-    t.date     "date"
     t.float    "total_cost"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
 end
