@@ -2,7 +2,7 @@
 
 #####Written by [Amoreena Hagedorn] (https://github.com/amoreena) & [Justin Pacubas] (https://github.com/pac1687) August 21, 2014
 
-####A photo of the authors:[Programmers](http://i.imgur.com/426f25f.jpg)
+####A photo of the authors: ![Alt text](http://i.imgur.com/426f25f.jpg "Coding Wizards")
 
 ===============================
 
