@@ -81,7 +81,6 @@ def cashier_menu
   whitespace
 
   puts "Please login or press x to return to the main menu:"
-  # binding.pry
   user_input = gets.chomp
   @current_cashier = Cashier.find_by_name(user_input)
   if user_input == 'x'
@@ -147,6 +146,7 @@ def customer_menu
   puts "Please enter your name:"
   current_customer = Customer.find_by_name(gets.chomp)
   last_sale = Sale.where(customer_id: current_customer.id).last
+  puts "Here is your last purchase receipt:"
   puts "This is your total cost: $#{last_sale.total_cost}"
   whitespace
   puts "You bought:"
@@ -195,6 +195,15 @@ def list_products
 end
 
 def total_sales
+  puts "What start date would you like to view? yyyy-mm-dd"
+  start_date = gets.chomp
+  puts "What end date would you like to view? yyyy-mm-dd"
+  e_date = gets.chomp
+  puts "The date range you selected is from #{start_date} until #{e_date}."
+  total_sales = Sale.where( created_at: start_date...e_date).sum("total_cost").to_f
+  puts "The total sales during that time is: $#{total_sales}"
+  sleep(5)
+  manager_menu
 
 end
 
