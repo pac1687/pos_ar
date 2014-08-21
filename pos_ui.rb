@@ -195,6 +195,10 @@ def list_products
 end
 
 def total_sales
+  header
+  puts "Total Sales"
+  whitespace
+
   puts "What start date would you like to view? yyyy-mm-dd"
   start_date = gets.chomp
   puts "What end date would you like to view? yyyy-mm-dd"
@@ -204,19 +208,47 @@ def total_sales
   puts "The total sales during that time is: $#{total_sales}"
   sleep(5)
   manager_menu
-
 end
 
 def cashier_sales
+  header
+  puts "Cashier Sales"
+  whitespace
 
+  puts "What start date would you like to view? yyyy-mm-dd"
+  start_date = gets.chomp
+  puts "What end date would you like to view? yyyy-mm-dd"
+  e_date = gets.chomp
+  puts "The date range you selected is from #{start_date} until #{e_date}."
+
+  puts "Please enter in a cashier's name or press x to return to the main menu:"
+  user_input = gets.chomp
+  @current_cashier = Cashier.find_by_name(user_input)
+  if user_input == 'x'
+    main_menu
+  elsif @current_cashier == nil
+   puts "Invalid name."
+   sleep(1.5)
+   cashier_sales
+  end
+
+  cashier_count = Sale.where(cashier_id: @current_cashier.id).count
+  whitespace
+  puts "#{@current_cashier.name} served #{cashier_count} customers."
+  manager_menu
 end
 
 def popular_products
-
+  header
+  puts "All Products"
+  whitespace
+  Product.all.each do |product|
+    number_products_bought = Purchase.all.where( product_id: product.id ).sum("quantity")
+    puts "#{product.id}. #{product.name} | Quantity sold: #{number_products_bought} | Price: $#{product.price.to_f}"
+  end
+  sleep(5)
+  manager_menu
 end
 
-def returned_products
-
-end
 
 main_menu
