@@ -110,7 +110,7 @@ def sale_menu
   header
   puts "Sale Menu"
   whitespace
-  puts "Please enter the customer's name"
+  puts "Please enter the customer's name:"
   current_customer = Customer.find_or_create_by(name: gets.chomp)
   new_sale = Sale.create({customer_id: current_customer.id, cashier_id: @current_cashier.id})
   list_products
@@ -134,13 +134,28 @@ def sale_menu
   updated_sale = Sale.update(new_sale.id, total_cost: total)
   sale_total = updated_sale.total_cost.to_f
   puts "Sale Total: $#{sale_total}"
+  binding.pry
   sleep(2)
   cashier_menu
   # puts
 end
 
 def customer_menu
-
+  header
+  puts "Customer Menu"
+  whitespace
+  puts "Please enter your name:"
+  current_customer = Customer.find_by_name(gets.chomp)
+  last_sale = Sale.where(customer_id: current_customer.id).last
+  puts "This is your total cost: $#{last_sale.total_cost}"
+  whitespace
+  puts "You bought:"
+  whitespace
+  last_sale.purchases.each do |purchase|
+    puts "#{purchase.product.name} | #{purchase.quantity} | #{purchase.product.price} | #{purchase.purchase_total}"
+  end
+  sleep(5)
+  main_menu
 end
 
 def add_product
