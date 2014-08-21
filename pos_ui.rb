@@ -8,6 +8,7 @@ development_configuration = database_configuration["development"]
 ActiveRecord::Base.establish_connection(development_configuration)
 
 @current_cashier
+@current_customer
 
 def whitespace
   puts "\n"
@@ -52,7 +53,6 @@ def manager_menu
   puts "Enter 3 to view total sales"
   puts "Enter 4 to view cashier sales"
   puts "Enter 5 view most popular products"
-  puts "Enter 6 view most returned products"
   puts "Enter x to exit the system"
 
   case gets.chomp
@@ -66,8 +66,6 @@ def manager_menu
     cashier_sales
   when '5'
     popular_products
-  when '6'
-    returned_products
   when 'x'
     exit
   else
@@ -144,8 +142,9 @@ def customer_menu
   puts "Customer Menu"
   whitespace
   puts "Please enter your name:"
-  current_customer = Customer.find_by_name(gets.chomp)
-  last_sale = Sale.where(customer_id: current_customer.id).last
+  @current_customer = Customer.find_by_name(gets.chomp)
+  last_sale = Sale.where(customer_id: @current_customer.id).last
+  whitespace
   puts "Here is your last purchase receipt:"
   puts "This is your total cost: $#{last_sale.total_cost}"
   whitespace
@@ -154,9 +153,38 @@ def customer_menu
   last_sale.purchases.each do |purchase|
     puts "#{purchase.product.name} | #{purchase.quantity} | #{purchase.product.price} | #{purchase.purchase_total}"
   end
-  sleep(5)
-  main_menu
+  puts "Would you like to return your purchase? y/n"
+  puts "If you want to exit this menu press n!"
+  case gets.chomp
+  when 'y'
+    return_purchase
+  when 'n'
+    main_menu
+  else
+    puts "Invalid entry"
+    sleep(3)
+    customer_menu
+  end
 end
+
+def return_purchase
+  puts "Here are all your purchases made at Justmo store:"
+  all_sale = Sale.where(customer_id: @current_customer.id)
+  all_sale.each do |sale|
+    sale.purchases.where(returned: false).each do |purchase|
+      puts "#{purchase.id} | #{purchase.product.name} | #{purchase.quantity} | #{purchase.product.price} | #{purchase.purchase_total}"
+    end
+  end
+  puts "Which purchase would you like to return?"
+  selected_purchase = Purchase.find(gets.chomp)
+  new_return = Return.new(purchase_id: selected_purchase.id)
+  selected_purchase.update(returned: true)
+  puts "You returned #{selected_purchase.quantity} #{selected_purchase.product.name}s."
+  puts "Your refund is $#{selected_purchase.purchase_total.to_f}."
+  sleep(4)
+  customer_menu
+end
+
 
 def add_product
   header
