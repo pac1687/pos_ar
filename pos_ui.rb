@@ -53,6 +53,8 @@ def manager_menu
   puts "Enter 3 to view total sales"
   puts "Enter 4 to view cashier sales"
   puts "Enter 5 view most popular products"
+  puts "Enter 6 view most returned products"
+
   puts "Enter x to exit the system"
 
   case gets.chomp
@@ -66,6 +68,8 @@ def manager_menu
     cashier_sales
   when '5'
     popular_products
+  when '6'
+    popular_returns
   when 'x'
     exit
   else
@@ -142,7 +146,17 @@ def customer_menu
   puts "Customer Menu"
   whitespace
   puts "Please enter your name:"
-  @current_customer = Customer.find_by_name(gets.chomp)
+  puts "Press x at any time to return to the main menu"
+  user_input = gets.chomp
+  @current_customer = Customer.find_by_name(user_input)
+
+  if user_input == 'x'
+      main_menu
+  elsif @current_customer == nil
+     puts "Invalid name, please try again."
+     sleep(1.5)
+     customer_menu
+  end
   last_sale = Sale.where(customer_id: @current_customer.id).last
   whitespace
   puts "Here is your last purchase receipt:"
@@ -177,7 +191,7 @@ def return_purchase
   end
   puts "Which purchase would you like to return?"
   selected_purchase = Purchase.find(gets.chomp)
-  new_return = Return.new(purchase_id: selected_purchase.id)
+  new_return = Return.create(purchase_id: selected_purchase.id)
   selected_purchase.update(returned: true)
   puts "You returned #{selected_purchase.quantity} #{selected_purchase.product.name}s."
   puts "Your refund is $#{selected_purchase.purchase_total.to_f}."
@@ -273,6 +287,19 @@ def popular_products
   Product.all.each do |product|
     number_products_bought = Purchase.all.where( product_id: product.id ).sum("quantity")
     puts "#{product.id}. #{product.name} | Quantity sold: #{number_products_bought} | Price: $#{product.price.to_f}"
+  end
+  sleep(5)
+  manager_menu
+end
+
+def popular_returns
+  header
+  puts "All Products"
+  whitespace
+
+  Product.all.each do |product|
+    number_products_returned = Purchase.all.where( product_id: product.id ).where( returned: true ).sum("quantity")
+    puts "#{product.id}. #{product.name} | Quantity returned: #{number_products_returned} | Price: $#{product.price.to_f}"
   end
   sleep(5)
   manager_menu
